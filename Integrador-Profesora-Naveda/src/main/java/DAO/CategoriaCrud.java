@@ -1,7 +1,7 @@
 package DAO;
 
-import integrador.config.DatabaseConfig; // Ajusta "integrador" si tu proyecto principal se llama distinto
-import dominio.Categoria;               // Ajusta "dominio" al nombre real de tu carpeta de entidades
+import integrador.config.DatabaseConfig; 
+import dominio.Categoria;               
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,4 +79,18 @@ public static ArrayList<Categoria> obtenerTodas() {
     }
 
     return listaCategorias;
-}}
+}
+    public static boolean modificarCategoria(Categoria cat) {
+        String query = "UPDATE categorias SET nombre = ?, descripcion = ? WHERE id_categoria = ? AND eliminado = 0;";
+        try (Connection con = DatabaseConfig.conectar();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setString(1, cat.getNombre());
+            pstmt.setString(2, cat.getDescripcion());
+            pstmt.setString(3, cat.getId());
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException err) {
+            System.err.println("[Error al modificar categoría]: " + err.getMessage());
+            return false;
+        }
+    }
+}
