@@ -63,4 +63,24 @@ public class UsuarioCrud {
         }
         return lista;
     }
+    public static boolean modificarUsuario(Usuario usr) {
+        String query = """
+            UPDATE usuarios 
+            SET nombre = ?, apellido = ?, mail = ?, celular = ?, contrasenia = ? 
+            WHERE id_usuario = ? AND eliminado = 0;
+            """;
+        try (Connection con = DatabaseConfig.conectar();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setString(1, usr.getNombre());
+            pstmt.setString(2, usr.getApellido());
+            pstmt.setString(3, usr.getMail());
+            pstmt.setString(4, usr.getCelular());
+            pstmt.setString(5, usr.getContrasenia());
+            pstmt.setString(6, usr.getId());
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException err) {
+            System.err.println("[Error al modificar usuario]: " + err.getMessage());
+            return false;
+        }
+    }
 }
