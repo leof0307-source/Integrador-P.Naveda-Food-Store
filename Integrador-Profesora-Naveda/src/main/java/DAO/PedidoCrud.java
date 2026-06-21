@@ -106,4 +106,17 @@ public class PedidoCrud {
         }
         return listaPedidos;
     }
+    public static boolean actualizarEstadoYPago(String idPedido, String nuevoEstado, String nuevaFormaPago) {
+        String query = "UPDATE pedidos SET estado = ?, forma_pago = ? WHERE id_pedido = ? AND eliminado = 0;";
+        try (Connection con = DatabaseConfig.conectar();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setString(1, nuevoEstado);
+            pstmt.setString(2, nuevaFormaPago);
+            pstmt.setString(3, idPedido);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException err) {
+            System.err.println("[Error al actualizar pedido]: " + err.getMessage());
+            return false;
+        }
+    }
 }
