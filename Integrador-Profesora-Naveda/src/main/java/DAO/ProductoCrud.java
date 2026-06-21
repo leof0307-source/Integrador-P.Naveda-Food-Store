@@ -72,4 +72,23 @@ public class ProductoCrud {
         }
         return lista;
     }
+    public static boolean modificarProducto(Producto prod) {
+        String query = """
+            UPDATE productos 
+            SET nombre = ?, precio = ?, descripcion = ?, stock = ?
+            WHERE id_producto = ? AND eliminado = 0;
+            """;
+        try (Connection con = DatabaseConfig.conectar();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setString(1, prod.getNombre());
+            pstmt.setDouble(2, prod.getPrecio());
+            pstmt.setString(3, prod.getDescripcion());
+            pstmt.setInt(4, prod.getStock());
+            pstmt.setString(5, prod.getId());
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException err) {
+            System.err.println("[Error al modificar producto]: " + err.getMessage());
+            return false;
+        }
+    }
 }
